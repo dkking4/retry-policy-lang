@@ -1,0 +1,11 @@
+{
+  "name": "retry-policy-lang",
+  "version": "0.1.0",
+  "description": "A tiny text format for retry policies, with a validating parser and a canonical pretty printer.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  }
+}
