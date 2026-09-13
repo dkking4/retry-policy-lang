@@ -78,6 +78,16 @@ npx tsc
 compiles `src/` to `dist/` per `tsconfig.json`. There are no third-party
 dependencies.
 
+## Testing
+
+```
+npm test
+```
+
+builds the project, then runs `test/` with Node's built-in test runner
+(`node --test`) against the compiled output in `dist/`. No test framework is
+installed; `node:test` and `node:assert` are part of the standard library.
+
 ## Status
 
 Early. The grammar and validation rules above are what's implemented today;
