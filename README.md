@@ -54,7 +54,7 @@ console.log(printRetryPolicy(policy))
 // backoff: exponential(base=200ms, factor=2, max=30s)
 // jitter: none
 // retry_on: [timeout, 5xx]
-// give_up_after: 1.5m
+// give_up_after: 90s
 
 canonicalize('max_attempts: 3\nbackoff: fixed(delay=1000ms)\nretry_on: [timeout]')
 // -> same policy, reformatted with delay shown as "1s" and jitter filled in
