@@ -69,6 +69,40 @@ parseRetryPolicy('max_attempts: 0\nbackoff: fixed(delay=1s)\nretry_on: [timeout]
 // ParseError: max_attempts must be a whole number of at least 1
 ```
 
+## Running a policy
+
+`executeRetryPolicy` turns a parsed policy into actual retry behavior against
+an async function. The policy only knows about condition names like
+`timeout` or `5xx`, not about what a particular client throws, so you supply
+a `classify` function that maps a caught error to one of those names (or
+`null` to mean "don't retry this"):
+
+```ts
+import { parseRetryPolicy, executeRetryPolicy } from './src/index'
+
+const policy = parseRetryPolicy(`
+  max_attempts: 4
+  backoff: exponential(base=200ms, factor=2, max=5s)
+  jitter: full
+  retry_on: [timeout, 5xx]
+  give_up_after: 10s
+`)
+
+const result = await executeRetryPolicy(policy, () => fetchThing(), {
+  classify: (err) => (err instanceof TimeoutError ? 'timeout' : err instanceof HttpError && err.status >= 500 ? '5xx' : null),
+})
+```
+
+`executeRetryPolicy` resolves with the function's result on success. On
+failure it throws `NotRetryableError` (the error's `classify` result wasn't
+in `retry_on`) or `RetryExhaustedError` (max attempts reached, or
+`give_up_after` elapsed before the next attempt) — either way the original
+error is available on `.cause`.
+
+`sleep`, `now`, and `random` are all overridable in the options object,
+which is what the tests use to run policies against a fake clock instead of
+waiting on real timers.
+
 ## Building
 
 ```
@@ -90,5 +124,6 @@ installed; `node:test` and `node:assert` are part of the standard library.
 
 ## Status
 
-Early. The grammar and validation rules above are what's implemented today;
-see the roadmap in project notes for what's planned next.
+Early. The format, parser, printer, and scheduler above are what's
+implemented today. Next up: a CLI that reads a policy file and prints it
+back canonicalized.

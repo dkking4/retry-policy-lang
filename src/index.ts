@@ -1,6 +1,8 @@
 export { ParseError, parseRetryPolicy } from './parser'
 export type { BackoffPolicy, Duration, Jitter, RetryPolicy } from './parser'
 export { printRetryPolicy } from './printer'
+export { computeDelay, executeRetryPolicy, NotRetryableError, RetryExhaustedError } from './scheduler'
+export type { RetryContext, RunOptions } from './scheduler'
 
 import { parseRetryPolicy } from './parser'
 import { printRetryPolicy } from './printer'
